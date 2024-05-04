@@ -12,7 +12,16 @@
       <div class="flex justify-end">
         <a class="bg-red-500 px-3 py-2 rounded-md" href="/logout"> Logout</a>
       </div>
-      <h3 class="text-3xl mb-2">Hello, <%= user.name %> 👋</h3>
+      <div class="flex flex-start gap-3 items-center">
+        <div class="w-12 h-12 rounded-md overflow-hidden">
+          <img
+            class="h-full w-full "
+            src="/images/uploads/<%= user.profile %>"
+            alt=""
+          />
+        </div>
+        <h3 class="text-3xl mb-2">Hello, <%= user.name %> 👋</h3>
+      </div>
       <h5>You can create a new post.</h5>
       <form action="/post" method="post">
         <textarea

@@ -10,6 +10,7 @@ const userModel = require("./models/user");
 const postModel = require("./models/post");
 const { hasSubscribers } = require("diagnostics_channel");
 const user = require("./models/user");
+const multer = require("./config/multer/multerConfir");
 
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// routes setup
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -43,7 +45,7 @@ app.post("/register", async (req, res) => {
 
       let token = jwt.sign({ email, userid: user._id }, "SecretKey");
       res.cookie("token", token);
-      res.send("Registered");
+      res.redirect("profile");
     });
   });
 });
@@ -117,6 +119,18 @@ app.post("/update/:id", isLoggedIn, async (req, res) => {
   );
 
   res.redirect("/profile");
+});
+
+app.post("/upload", isLoggedIn, multer.single("file"), async (req, res) => {
+  let user = await userModel.findOne({ email: req.user.email });
+  user.profile = req.file.filename;
+  user.save()
+
+  res.redirect("/profile");
+});
+
+app.get("/update", isLoggedIn, async (req, res) => {
+  res.render("upload");
 });
 
 function isLoggedIn(req, res, next) {
